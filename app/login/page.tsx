@@ -22,7 +22,7 @@ import { Suspense } from "react";
 function LoginFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
