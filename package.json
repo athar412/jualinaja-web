@@ -20,6 +20,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@supabase/supabase-js": "^2.105.1",
     "@tanstack/react-table": "^8.21.3",
     "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.20.0",

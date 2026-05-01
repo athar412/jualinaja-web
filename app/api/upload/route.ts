@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 import { auth } from "@/auth";
+import { createClient } from "@supabase/supabase-js";
 import sharp from "sharp";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -40,24 +44,38 @@ export async function POST(request: NextRequest) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      // Create upload directory
+      // Optimize image with sharp
+      const optimized = await sharp(buffer)
+        .resize(1200, 1200, { fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 85 })
+        .toBuffer();
+
+      // Generate unique file path
       const now = new Date();
       const year = now.getFullYear().toString();
       const month = (now.getMonth() + 1).toString().padStart(2, "0");
-      const uploadDir = join(process.cwd(), "public", "uploads", year, month);
-      await mkdir(uploadDir, { recursive: true });
-
-      // Generate unique filename and optimize with sharp
       const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
-      const filePath = join(uploadDir, uniqueName);
+      const filePath = `${year}/${month}/${uniqueName}`;
 
-      await sharp(buffer)
-        .resize(1200, 1200, { fit: "inside", withoutEnlargement: true })
-        .webp({ quality: 85 })
-        .toFile(filePath);
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from("ads-images")
+        .upload(filePath, optimized, {
+          contentType: "image/webp",
+          upsert: false,
+        });
 
-      const url = `/uploads/${year}/${month}/${uniqueName}`;
-      uploadedUrls.push(url);
+      if (uploadError) {
+        console.error("Supabase upload error:", uploadError);
+        return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("ads-images")
+        .getPublicUrl(filePath);
+
+      uploadedUrls.push(publicUrl);
     }
 
     return NextResponse.json({ urls: uploadedUrls });
