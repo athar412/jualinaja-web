@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: jualinaja_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jualinaja
+      POSTGRES_PASSWORD: jualinaja_secret
+      POSTGRES_DB: jualinaja_bandung
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jualinaja -d jualinaja_bandung"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local

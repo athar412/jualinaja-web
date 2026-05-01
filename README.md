@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JualinAja Bandung
 
-## Getting Started
+JualinAja Bandung adalah platform iklan baris C2C (Consumer-to-Consumer) yang dirancang khusus untuk warga Bandung. Platform ini memiliki desain "Quiet Luxury" yang ultra-minimalis, memudahkan transaksi jual beli tanpa sistem checkout internal. Pembeli dan penjual akan terhubung secara langsung via WhatsApp untuk Cash on Delivery (COD).
 
-First, run the development server:
+## Fitur Utama
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Ultra-Minimalist UI**: Desain Quiet Luxury yang difokuskan pada produk.
+- **Autentikasi (NextAuth)**: Sistem login dan pendaftaran pengguna yang aman (JWT).
+- **Postingan Iklan**: Pengguna dapat memposting iklan lengkap dengan gambar (dioptimasi menggunakan `sharp`).
+- **Wishlist**: Simpan iklan untuk dilihat nanti.
+- **Manajemen Dashboard**: Lihat, edit, tandai terjual, dan hapus iklan Anda sendiri.
+- **Admin Panel**: Sistem moderasi iklan, manajemen user (Banned/Suspend), dan statistik platform.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: Next.js 16 (App Router)
+- **Database**: PostgreSQL
+- **ORM**: Prisma 7
+- **Styling**: Tailwind CSS v4 & shadcn/ui
+- **Autentikasi**: Auth.js / NextAuth v5
+- **Gambar**: sharp & react-dropzone
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Persiapan Lokal (Development)
 
-## Learn More
+1. **Clone repository ini**
+   ```bash
+   git clone <repo-url>
+   cd jualinaja_bandung
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Jalankan Database via Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+   *Ini akan menjalankan instance PostgreSQL lokal di port `5432`.*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Konfigurasi Environment Variables**
+   Salin `.env.example` ke `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   Pastikan nilai `DATABASE_URL` Anda sudah benar sesuai yang ada di dalam docker-compose.
 
-## Deploy on Vercel
+5. **Generate & Migrate Database**
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev --name init
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+6. **Jalankan Seed (Data Awal Admin & Kategori)**
+   ```bash
+   npm run seed
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+7. **Jalankan Server Development**
+   ```bash
+   npm run dev
+   ```
+   Buka [http://localhost:3000](http://localhost:3000) di browser.
+
+## Panduan Deploy ke VPS (Production)
+
+Untuk melakukan deploy platform ke VPS (misalnya Ubuntu Server):
+
+1. **Pastikan Docker, Node.js, dan Git sudah terinstall di VPS.**
+2. **Setup PostgreSQL menggunakan `docker-compose.yml` di server Anda.**
+3. **Konfigurasi `.env` untuk production:**
+   - Ubah `AUTH_URL` menjadi domain asli Anda (misal `https://jualinaja.com`).
+   - Ubah `AUTH_SECRET` dengan string acak (gunakan `npx auth secret`).
+   - Ubah `DATABASE_URL` mengarah ke PostgreSQL produksi.
+4. **Build Aplikasi**
+   ```bash
+   npm run build
+   ```
+5. **Jalankan Aplikasi dengan PM2 (atau proses manager lain)**
+   ```bash
+   npm install -g pm2
+   pm2 start npm --name "jualinaja" -- start
+   ```
+
+## Akun Demo
+- **Admin**: `admin@jualinaja.local` / Password: `password123`

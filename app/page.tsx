@@ -1,65 +1,156 @@
-import Image from "next/image";
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { prisma } from "@/lib/prisma";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import FilterBar from "@/components/ads/FilterBar";
+import AdCard from "@/components/ads/AdCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Discover — JualinAja Bandung",
+  description: "Temukan ribuan iklan baris Bandung: elektronik, fashion, kendaraan, properti dan lebih banyak lagi.",
+};
+
+async function getAds(searchParams: Record<string, string>) {
+  const q = searchParams.q || "";
+  const category = searchParams.category || "";
+  const condition = searchParams.condition || "";
+  const location = searchParams.location || "";
+  const page = parseInt(searchParams.page || "1");
+  const limit = 12;
+  const skip = (page - 1) * limit;
+
+  const where = {
+    status: "LIVE" as const,
+    ...(q && {
+      OR: [
+        { title: { contains: q, mode: "insensitive" as const } },
+        { description: { contains: q, mode: "insensitive" as const } },
+      ],
+    }),
+    ...(category && { category: { slug: category } }),
+    ...(condition && { condition: condition as "NEW" | "USED" }),
+    ...(location && { location: { contains: location, mode: "insensitive" as const } }),
+  };
+
+  const [ads, total] = await Promise.all([
+    prisma.ad.findMany({
+      where,
+      include: {
+        images: { orderBy: { order: "asc" }, take: 1 },
+        category: true,
+        author: { select: { id: true, name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+    }),
+    prisma.ad.count({ where }),
+  ]);
+
+  return { ads, total, page, totalPages: Math.ceil(total / limit) };
+}
+
+async function getCategories() {
+  return prisma.category.findMany({ orderBy: { name: "asc" } });
+}
+
+function AdGrid({ ads }: { ads: Awaited<ReturnType<typeof getAds>>["ads"] }) {
+  if (ads.length === 0) {
+    return (
+      <div className="py-24 text-center">
+        <p className="text-muted-foreground text-sm">Tidak ada iklan ditemukan.</p>
+      </div>
+    );
+  }
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+      {ads.map((ad: any) => (
+        <AdCard key={ad.id} ad={ad} />
+      ))}
     </div>
+  );
+}
+
+function GridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i}>
+          <Skeleton className="ad-image-ratio w-full" />
+          <div className="pt-3 space-y-2">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-20" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string>>;
+}) {
+  const params = await searchParams;
+  const [{ ads, total, page, totalPages }, categories] = await Promise.all([
+    getAds(params),
+    getCategories(),
+  ]);
+
+  const q = params.q;
+  const category = params.category;
+  const heading = q
+    ? `Hasil untuk "${q}"`
+    : category
+      ? categories.find((c: any) => c.slug === category)?.name ?? "Semua Iklan"
+      : "Semua Iklan";
+
+  return (
+    <>
+      <Navbar />
+      <FilterBar categories={categories} />
+
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        {/* Heading row */}
+        <div className="flex items-baseline justify-between mb-10">
+          <h1 className="text-2xl font-medium tracking-tight-luxury">
+            {heading}
+          </h1>
+          <p className="text-xs text-muted-foreground">{total} iklan</p>
+        </div>
+
+        <Suspense fallback={<GridSkeleton />}>
+          <AdGrid ads={ads} />
+        </Suspense>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-16">
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const p = i + 1;
+              const href = `/?${new URLSearchParams({ ...params, page: String(p) })}`;
+              return (
+                <a
+                  key={p}
+                  href={href}
+                  className={`w-8 h-8 flex items-center justify-center text-xs border transition-colors ${p === page
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border hover:border-foreground"
+                    }`}
+                >
+                  {p}
+                </a>
+              );
+            })}
+          </div>
+        )}
+      </main>
+
+      <Footer />
+    </>
   );
 }
