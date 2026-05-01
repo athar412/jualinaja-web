@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
+import { postToInstagram } from "@/lib/instagram";
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,14 +37,22 @@ export async function POST(request: NextRequest) {
     if (resultCode === "00") {
       const adId = additionalParam;
       if (adId) {
-        await prisma.ad.update({
+        const ad = await prisma.ad.update({
           where: { id: adId },
           data: {
             status: "LIVE",
             paymentStatus: "PAID",
           },
+          include: {
+            images: { orderBy: { order: "asc" }, take: 1 },
+          },
         });
         console.log(`Ad ${adId} is now LIVE after payment.`);
+
+        // Auto-post to Instagram (fire-and-forget)
+        if (ad.images?.[0]?.url) {
+          postToInstagram(ad.images[0].url, ad.title, Number(ad.price), ad.description).catch(() => {});
+        }
       }
     } else {
       console.log(`Payment failed for Order ID: ${merchantOrderId}, Result Code: ${resultCode}`);
@@ -55,3 +64,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
