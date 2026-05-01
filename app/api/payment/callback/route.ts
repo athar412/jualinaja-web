@@ -50,17 +50,23 @@ export async function POST(request: NextRequest) {
         });
         console.log(`Ad ${adId} is now LIVE after payment.`);
 
-        // Auto-post to Instagram (fire-and-forget)
+        // Auto-post to Instagram (Await to ensure it finishes in serverless environment)
         if (ad.images?.[0]?.url) {
-          postToInstagram(ad.images[0].url, {
-            title: ad.title,
-            price: Number(ad.price),
-            description: ad.description,
-            condition: ad.condition,
-            location: ad.location,
-            contactPhone: ad.contactPhone,
-            categoryName: ad.category.name,
-          }).catch(() => {});
+          console.log(`[Instagram] Attempting to post ad: ${ad.id}`);
+          try {
+            await postToInstagram(ad.images[0].url, {
+              title: ad.title,
+              price: Number(ad.price),
+              description: ad.description,
+              condition: ad.condition,
+              location: ad.location,
+              contactPhone: ad.contactPhone,
+              categoryName: ad.category.name,
+            });
+            console.log(`[Instagram] Post sequence completed for ad: ${ad.id}`);
+          } catch (igError) {
+            console.error(`[Instagram] Fatal error during post sequence for ad ${ad.id}:`, igError);
+          }
         }
       }
     } else {
