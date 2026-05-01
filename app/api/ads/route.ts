@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { z } from "zod";
+import { postToInstagram } from "@/lib/instagram";
 
 const adSchema = z.object({
   title: z.string().min(3).max(100),
@@ -94,9 +95,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Auto-post to Instagram (fire-and-forget, never blocks response)
+    if (ad.images?.[0]?.url) {
+      postToInstagram(ad.images[0].url, ad.title, adData.price, adData.description).catch(() => {});
+    }
+
     return NextResponse.json(ad, { status: 201 });
   } catch (error) {
     console.error("Create ad error:", error);
     return NextResponse.json({ error: "Failed to create ad" }, { status: 500 });
   }
 }
+
