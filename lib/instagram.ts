@@ -1,6 +1,6 @@
 /**
  * Instagram Graph API Integration
- * Auto-posts ads to Instagram when they are created.
+ * Auto-posts ads to Instagram when they are created and paid.
  */
 
 function formatRupiah(price: number | string): string {
@@ -11,25 +11,40 @@ function formatRupiah(price: number | string): string {
   }).format(Number(price));
 }
 
-function buildCaption(title: string, price: number | string, description: string): string {
+interface CaptionData {
+  title: string;
+  price: number | string;
+  description: string;
+  condition: string;
+  location: string;
+  contactPhone: string;
+  categoryName: string;
+}
+
+function buildCaption(data: CaptionData): string {
+  const { title, price, description, condition, location, contactPhone, categoryName } = data;
+  
   return [
     `🛍️ ${title}`,
     `💰 ${formatRupiah(price)}`,
     ``,
-    `📝 ${description}`,
+    `🏷️ Kategori: ${categoryName}`,
+    `✨ Kondisi: ${condition === "NEW" ? "Baru" : "Bekas"}`,
+    `📍 Lokasi: ${location}`,
+    `📲 WhatsApp: ${contactPhone}`,
     ``,
-    `📍 COD Bandung`,
+    `📝 Deskripsi:`,
+    `${description}`,
+    ``,
     `📲 Chat langsung via link di bio!`,
     ``,
-    `#JualinAja #JualBeliBandung #JualBeli #Bandung #SecondHand #BarangBekas #BarangBaru #MarketplaceBandung`,
+    `#JualinAja #JualBeliBandung #JualBeli #Bandung #SecondHand #BarangBekas #BarangBaru #MarketplaceBandung #${categoryName.replace(/\s+/g, '')}`,
   ].join("\n");
 }
 
 export async function postToInstagram(
   imageUrl: string,
-  title: string,
-  price: number | string,
-  description: string
+  data: CaptionData
 ): Promise<void> {
   const accountId = process.env.IG_ACCOUNT_ID;
   const accessToken = process.env.IG_ACCESS_TOKEN;
@@ -40,7 +55,7 @@ export async function postToInstagram(
   }
 
   try {
-    const caption = buildCaption(title, price, description);
+    const caption = buildCaption(data);
 
     // Step 1: Create media container
     const containerRes = await fetch(

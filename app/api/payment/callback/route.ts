@@ -45,13 +45,22 @@ export async function POST(request: NextRequest) {
           },
           include: {
             images: { orderBy: { order: "asc" }, take: 1 },
+            category: true,
           },
         });
         console.log(`Ad ${adId} is now LIVE after payment.`);
 
         // Auto-post to Instagram (fire-and-forget)
         if (ad.images?.[0]?.url) {
-          postToInstagram(ad.images[0].url, ad.title, Number(ad.price), ad.description).catch(() => {});
+          postToInstagram(ad.images[0].url, {
+            title: ad.title,
+            price: Number(ad.price),
+            description: ad.description,
+            condition: ad.condition,
+            location: ad.location,
+            contactPhone: ad.contactPhone,
+            categoryName: ad.category.name,
+          }).catch(() => {});
         }
       }
     } else {
@@ -64,4 +73,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-
