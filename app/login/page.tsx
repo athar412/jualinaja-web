@@ -129,7 +129,7 @@ export default function LoginPage() {
             Jual beli barang dengan mudah.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Platform jual beli online untuk warga Bandung. Bayar di tempat, tanpa biaya tambahan.
+            Platform jual beli online untuk warga Bandung. Mulai dari Rp10.000, iklanmu langsung tayang!
           </p>
         </div>
       </div>
