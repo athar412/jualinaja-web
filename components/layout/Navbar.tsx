@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
-import { Search, Heart, User, Menu, X, Plus, LayoutDashboard, LogOut, Shield } from "lucide-react";
+import { Search, Heart, User, Menu, X, Plus, LayoutDashboard, LogOut, Shield, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -49,7 +49,15 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
-
+          <a
+            href="https://www.instagram.com/jualinaja_bandung?igsh=ZmlnaDQzM2dqdjFy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 hover:bg-muted transition-colors hidden sm:block"
+            aria-label="Instagram"
+          >
+            <Instagram size={18} strokeWidth={1.5} />
+          </a>
 
           {session?.user ? (
             <>
