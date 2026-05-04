@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/layout/Navbar";
+import HeroBanner from "@/components/HeroBanner";
 import Footer from "@/components/layout/Footer";
 import FilterBar from "@/components/ads/FilterBar";
 import AdCard from "@/components/ads/AdCard";
@@ -112,6 +113,9 @@ export default async function HomePage({
   return (
     <>
       <Navbar />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <HeroBanner />
+      </div>
       <FilterBar categories={categories} />
 
       <main className="max-w-7xl mx-auto px-6 py-12">
