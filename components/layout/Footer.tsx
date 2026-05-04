@@ -39,7 +39,7 @@ export default function Footer() {
               jualinaja
             </Link>
             <p className="mt-3 text-xs text-muted-foreground leading-relaxed max-w-48">
-              Platform iklan baris C2C untuk warga Bandung. Jual beli barang dengan mudah, aman, dan COD langsung.
+              Platform jual beli online untuk warga Bandung. Jual beli barang dengan mudah, aman, dan bisa bayar di tempat.
             </p>
 
             {/* Social Icons */}
@@ -94,7 +94,7 @@ export default function Footer() {
             <p className="text-xs font-medium uppercase tracking-widest mb-4">Hubungi Kami</p>
             <ul className="space-y-3 text-xs text-muted-foreground">
               <li><span>Bandung, Jawa Barat</span></li>
-              <li><span>Transaksi via COD</span></li>
+              <li><span>Bisa bayar di tempat</span></li>
               <li>
                 <a
                   href={WHATSAPP_URL}

@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "Discover — JualinAja Bandung",
-  description: "Temukan ribuan iklan baris Bandung: elektronik, fashion, kendaraan, properti dan lebih banyak lagi.",
+  description: "Temukan ribuan barang dijual di Bandung: elektronik, fashion, kendaraan, properti dan lebih banyak lagi.",
 };
 
 async function getAds(searchParams: Record<string, string>) {

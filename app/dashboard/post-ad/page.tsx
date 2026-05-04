@@ -214,7 +214,7 @@ export default function PostAdPage() {
 
         {/* Contact */}
         <section className="space-y-4">
-          <h2 className="text-sm font-medium mb-4 pb-2 border-b border-border">Lokasi & Kontak COD</h2>
+          <h2 className="text-sm font-medium mb-4 pb-2 border-b border-border">Lokasi & Kontak Penjual</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">

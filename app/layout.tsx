@@ -6,12 +6,12 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "JualinAja — Iklan Baris Bandung",
+    default: "JualinAja — Jual Beli Online Bandung",
     template: "%s | JualinAja",
   },
   description:
-    "Platform iklan baris C2C terpercaya untuk warga Bandung. Jual beli barang baru & bekas, COD, tanpa ribet.",
-  keywords: ["iklan baris", "jual beli", "COD Bandung", "bekas", "C2C"],
+    "Platform jual beli online terpercaya untuk warga Bandung. Jual beli barang baru & bekas, bayar di tempat, tanpa ribet.",
+  keywords: ["jual beli online", "jual beli Bandung", "bayar di tempat", "bekas", "baru"],
   openGraph: {
     type: "website",
     locale: "id_ID",

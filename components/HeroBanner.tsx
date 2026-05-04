@@ -10,7 +10,7 @@ const banners = [
     label: "Platform",
     title: "Jual Beli Tanpa Ribet,\nKhusus Warga Bandung.",
     subtitle:
-      "Platform iklan baris C2C terpercaya — temukan barang baru & bekas, negosiasi langsung, dan COD di area Bandung.",
+      "Platform jual beli online terpercaya — temukan barang baru & bekas, negosiasi langsung, dan bayar di tempat di area Bandung.",
     cta: { text: "Mulai Jelajahi", href: "/" },
     ctaSecondary: { text: "Pasang Iklan", href: "/dashboard/post-ad" },
     icon: MapPin,
@@ -36,12 +36,12 @@ const banners = [
     label: "Keamanan",
     title: "Transaksi Aman,\nTanpa Khawatir.",
     subtitle:
-      "Periksa detail barang sebelum membeli. Gunakan sistem COD untuk keamanan. Laporkan penjual mencurigakan melalui platform kami.",
+      "Periksa detail barang sebelum membeli. Gunakan sistem bayar di tempat untuk keamanan. Laporkan penjual mencurigakan melalui platform kami.",
     cta: { text: "Daftar Sekarang", href: "/register" },
     ctaSecondary: null,
     icon: ShieldCheck,
     tips: [
-      "Cek kondisi barang saat COD",
+      "Cek kondisi barang saat ketemu langsung",
       "Jangan transfer sebelum bertemu",
       "Laporkan jika ada kecurigaan",
     ],

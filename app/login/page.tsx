@@ -129,7 +129,7 @@ export default function LoginPage() {
             Jual beli barang dengan mudah.
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Platform iklan baris C2C untuk warga Bandung. COD langsung, tanpa biaya tambahan.
+            Platform jual beli online untuk warga Bandung. Bayar di tempat, tanpa biaya tambahan.
           </p>
         </div>
       </div>
