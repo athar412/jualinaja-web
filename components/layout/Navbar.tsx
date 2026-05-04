@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
-import { Search, Heart, User, Menu, X, Plus, LayoutDashboard, LogOut, Shield, Instagram } from "lucide-react";
+import { Search, Heart, User, Menu, X, Plus, LayoutDashboard, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -56,7 +56,7 @@ export default function Navbar() {
             className="p-2 hover:bg-muted transition-colors hidden sm:block"
             aria-label="Instagram"
           >
-            <Instagram size={18} strokeWidth={1.5} />
+            <svg xmlns="http://www.w3.org/2000/svg" width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
           </a>
 
           {session?.user ? (
