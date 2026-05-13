@@ -9,7 +9,7 @@ import AdCard from "@/components/ads/AdCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
-  title: "Discover — JualinAja Bandung",
+  title: "Jual Beli Online Bandung Terpercaya — JualinAja",
   description: "Temukan ribuan barang dijual di Bandung: elektronik, fashion, kendaraan, properti dan lebih banyak lagi.",
 };
 
